@@ -16,6 +16,12 @@ This project is a modularized Snake Game developed using Java Swing and Maven. I
 - Data reset functionality
 - Logging using Log4j2 for better debugging and event tracing
 
+## Demo
+<img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/0.png" alt="Home Screen" width="400"/>
+<img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/1.png" alt="Home Screen" width="400"/>
+<img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/2.png" alt="Home Screen" width="400"/>
+<img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/3.png" alt="Home Screen" width="400"/>
+
 ## 🏗️ Project Architecture
 
 ### Package Structure
