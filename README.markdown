@@ -22,7 +22,7 @@ This project is a modularized Snake Game developed using Java Swing and Maven. I
 <img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/2.png" alt="Home Screen" width="400"/>
 <img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/3.png" alt="Home Screen" width="400"/>
 
-## 🏗️ Project Architecture
+## Project Architecture
 
 ### Package Structure
 ```
@@ -65,7 +65,7 @@ org.example
 - Converts time values (milliseconds → days/hours/minutes/seconds)
 - Used across UI components for clean display formatting
 
-## ⚙️ Technologies Used
+## Technologies Used
 | Tool / Library | Purpose |
 |----------------|---------|
 | Java 21        | Core language |
@@ -134,5 +134,5 @@ Logs are stored in the `/logs` directory.
 
 ## 🧑‍💻 Author
 **Nelani Maluka**  
-🎓 Software Developer  
-💻 Passionate about Java, Spring Boot, and Backend Development
+Software Developer  
+Passionate about Java, Spring Boot, and Backend Development
