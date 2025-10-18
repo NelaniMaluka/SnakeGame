@@ -32,18 +32,25 @@ public class SnakeGameUI extends JPanel implements ActionListener {
     Timer gameLoop;
     int velocityX;
     int velocityY;
+    String gameMode;
+
+    int timeLimitSeconds;
+    int foodToEat;
+    int tickCounter;
+    int foodEaten;
 
     private final JFrame frame; // for going back to intro panel
 
-    public SnakeGameUI(int blockSize, int panelWidth, int panelHeight) {
-        this(blockSize, panelWidth, panelHeight, null);
+    public SnakeGameUI(int blockSize, int panelWidth, int panelHeight, String gameMode) {
+        this(blockSize, panelWidth, panelHeight,  gameMode, null);
     }
 
-    public SnakeGameUI(int blockSize, int panelWidth, int panelHeight, JFrame frame) {
+    public SnakeGameUI(int blockSize, int panelWidth, int panelHeight, String gameMode, JFrame frame) {
         this.blockSize = blockSize;
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
         this.frame = frame;
+        this.gameMode = gameMode;
 
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(this.panelWidth, this.panelHeight));
@@ -59,6 +66,7 @@ public class SnakeGameUI extends JPanel implements ActionListener {
         velocityY = 0;
         startTime = System.currentTimeMillis();
         gameLoop.start();
+        generateTimeModeValues();
 
         // Listen for keyPress
         addKeyListener(new SnakeKeyHandler(this));
@@ -101,24 +109,75 @@ public class SnakeGameUI extends JPanel implements ActionListener {
             showGameOverButtons();
         } else {
             g.drawString("Score: " + String.valueOf(snakeBody.size()), blockSize - 16, blockSize);
+            if (gameMode.equals("Timed")) {
+                int minutes = timeLimitSeconds / 60;
+                int seconds = timeLimitSeconds % 60;
+                String formattedTime = String.format("%02d:%02d", minutes, seconds);
+
+                g.drawString("Get: " + String.valueOf(foodToEat) + " Blocks in Time: " + formattedTime, blockSize + 320, blockSize);
+            }
         }
     }
 
     public void placeFood() {
-        int n = panelWidth / blockSize;
-        int x = panelHeight / blockSize;
+        int gridWidth = panelWidth / blockSize;
+        int gridHeight = panelHeight / blockSize;
 
-        // Generate a random food position
+        boolean validPosition;
         do {
-            food = new Tile(random.nextInt(n), random.nextInt(x));
-        } while (food.getX() == snakeHead.getX() && food.getY() == snakeHead.getY());
+            int x = random.nextInt(gridWidth);
+            int y = random.nextInt(gridHeight);
+
+            // Check that it doesn't overlap head or body
+            validPosition = true;
+
+            if (x == snakeHead.getX() && y == snakeHead.getY()) {
+                validPosition = false;
+            } else {
+                for (Tile segment : snakeBody) {
+                    if (segment.getX() == x && segment.getY() == y) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+            }
+
+            if (validPosition) {
+                food = new Tile(x, y);
+            }
+        } while (!validPosition);
     }
 
     public void eatFood() {
         if (food.getX() == snakeHead.getX() && food.getY() == snakeHead.getY()) {
-            snakeBody.add(food);
-            placeFood();
+            // Add new segment at tail (clone the last body segment or head if first segment)
+            Tile newSegment;
+            if (snakeBody.isEmpty()) {
+                newSegment = new Tile(snakeHead.getX(), snakeHead.getY());
+            } else {
+                Tile tail = snakeBody.get(snakeBody.size() - 1);
+                newSegment = new Tile(tail.getX(), tail.getY());
+            }
+            snakeBody.add(newSegment);
+
+            placeFood(); // Generate new food
+            foodEaten++;
         }
+    }
+
+    private void generateTimeModeValues() {
+        Random random = new Random();
+        foodToEat = random.nextInt(20) + 1; // 1 to 20 fruits
+
+        int gridWidth = panelWidth / blockSize;
+        int gridHeight = panelHeight / blockSize;
+
+        // Base time from grid size
+        int baseTime = (gridWidth * gridHeight) / (10 * 2);
+
+        // Scale time based on valToGet (e.g., +5 seconds per fruit)
+        timeLimitSeconds = baseTime + (foodToEat * 5);
+        foodEaten = 0;
     }
 
     @Override
@@ -126,6 +185,23 @@ public class SnakeGameUI extends JPanel implements ActionListener {
         eatFood();
         move();
         repaint();
+
+        if (gameMode.equals("Timed")) {
+            if (timeLimitSeconds <= 0){
+                gameOver = true;
+            }
+
+            if (foodEaten == foodToEat) {
+                generateTimeModeValues();
+            }
+
+            tickCounter++;
+            if (tickCounter >= 10) { // 10 ticks × 100ms = 1 second
+                timeLimitSeconds--;
+                tickCounter = 0;
+            }
+        }
+
         if (gameOver) {
             gameLoop.stop();
             long elapsedTime = System.currentTimeMillis() - startTime;
@@ -143,22 +219,26 @@ public class SnakeGameUI extends JPanel implements ActionListener {
     }
 
     private void move() {
-        // Move the snake body
-        for (int i = snakeBody.size() -1; i >= 0; i--) {
+        // Save old head position
+        int oldHeadX = snakeHead.getX();
+        int oldHeadY = snakeHead.getY();
+
+        // Move head
+        snakeHead.setX(snakeHead.getX() + velocityX);
+        snakeHead.setY(snakeHead.getY() + velocityY);
+
+        // Move body segments
+        for (int i = snakeBody.size() - 1; i >= 0; i--) {
             Tile snakePart = snakeBody.get(i);
             if (i == 0) {
-                snakePart.setX(snakeHead.getX());
-                snakePart.setY(snakeHead.getY());
+                snakePart.setX(oldHeadX);
+                snakePart.setY(oldHeadY);
             } else {
-                Tile prevTile = snakeBody.get(i-1);
+                Tile prevTile = snakeBody.get(i - 1);
                 snakePart.setX(prevTile.getX());
                 snakePart.setY(prevTile.getY());
             }
         }
-
-        // Move snake head
-        snakeHead.setX(snakeHead.getX() + velocityX);
-        snakeHead.setY(snakeHead.getY() + velocityY);
 
         checkCollision();
     }
@@ -258,6 +338,7 @@ public class SnakeGameUI extends JPanel implements ActionListener {
 
         gameLoop.start();
         requestFocusInWindow();
+        generateTimeModeValues();
     }
 
     private void returnToMenu() {

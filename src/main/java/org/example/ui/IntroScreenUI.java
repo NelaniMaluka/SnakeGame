@@ -33,9 +33,22 @@ public class IntroScreenUI extends JPanel{
         button.setMaximumSize(new Dimension(150, 25));
 
         // On click → gather settings and switch to game screen
-        button.addActionListener(e -> {switchToGame(frame, boardWidth, boardHeight);});
+        button.addActionListener(e -> {
+            switchToGame(frame, boardWidth, boardHeight, "Normal");}
+        );
 
-        // Start Game button
+        // Timed Mode
+        JButton tmButton = new JButton("Timed Mode");
+        tmButton.setFont(new Font("Arial", Font.BOLD, 15));
+        tmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        tmButton.setMaximumSize(new Dimension(150, 25));
+
+        // On click → gather settings and switch to game screen
+        tmButton.addActionListener(e -> {
+            switchToGame(frame, boardWidth, boardHeight, "Timed");}
+        );
+
+        // Stats Game button
         JButton statsButton = new JButton("Stats");
         statsButton.setFont(new Font("Arial", Font.BOLD, 15));
         statsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -44,16 +57,18 @@ public class IntroScreenUI extends JPanel{
         // On click → gather settings and switch to game screen
         statsButton.addActionListener(e -> {switchToStats(frame);});
 
-        add(Box.createVerticalStrut(130));
-        add(label);
         add(Box.createVerticalStrut(80));
+        add(label);
+        add(Box.createVerticalStrut(60));
         add(button);
+        add(Box.createVerticalStrut(40));
+        add(tmButton);
         add(Box.createVerticalStrut(40));
         add(statsButton);
     }
 
-    private void switchToGame(JFrame frame, int boardWidth, int boardHeight) {
-        SnakeGameUI snakeGameUI = new SnakeGameUI(25, boardWidth, boardHeight, frame);
+    private void switchToGame(JFrame frame, int boardWidth, int boardHeight, String gameMode) {
+        SnakeGameUI snakeGameUI = new SnakeGameUI(25, boardWidth, boardHeight, gameMode,  frame);
 
         frame.getContentPane().removeAll();
         frame.add(snakeGameUI);
