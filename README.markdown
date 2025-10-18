@@ -48,6 +48,7 @@ Timed Mode adds an extra challenge by giving players a limited amount of time to
 <img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/1.png" alt="Home Screen" width="400"/>
 <img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/2.png" alt="Home Screen" width="400"/>
 <img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/3.png" alt="Home Screen" width="400"/>
+<img src="https://github.com/NelaniMaluka/SnakeGame/blob/main/readme%20images/4.png" alt="Home Screen" width="400"/>
 
 ## Project Architecture
 
